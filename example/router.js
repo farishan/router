@@ -1,4 +1,9 @@
-const router = new Router()
+const router = new Router({
+  useLogger: true
+})
+
+router.init()
+
 router.onchange = (e) => {
   scriptLoader.reset()
   scriptLoader.loadScripts(false, e.routeMap[e.currentRoute].scripts)
@@ -7,8 +12,15 @@ router.onchange = (e) => {
   }
 
   const navButtons = router.createNavigation('button')
+  const navInput = router.createNavigation('input')
 
-  document.getElementById('router-nav').replaceWith(navButtons.Node)
+  if(document.getElementById('router-nav-buttons')){
+    document.getElementById('router-nav-buttons').replaceWith(navButtons)
+  }
+
+  if(document.getElementById('router-nav-input')){
+    document.getElementById('router-nav-input').replaceWith(navInput)
+  }
 }
 
 const routes = {
@@ -35,6 +47,11 @@ const routes = {
 }
 
 const navButtons = router.createNavigation('button')
-const routerDOM = router.getDOM([navButtons.Node])
+const navInput = router.createNavigation('input')
+
+const routerDOM = router.getDOM([
+  // navButtons,
+  navInput
+])
 
 document.body.appendChild(routerDOM)

@@ -9,11 +9,28 @@ function Router(options = {}){
 
   this.onchange = null
 
+  this.logWindow = document.createElement('div');
+  this.currentRouteWindow = document.createElement('div');
+
+  this.init = () => {
+    if(this.useLogger){
+      this.logWindow.setAttribute('style', 'border:1px solid;padding:5px')
+      const logWindowTitle = document.createTextNode('Router Log Window')
+      this.logWindow.appendChild(logWindowTitle)
+
+      this.currentRouteWindow.innerHTML = `Current route: <code>${this.currentRoute}</code>`
+      this.logWindow.appendChild(this.currentRouteWindow)
+
+      document.body.appendChild(this.logWindow)
+    }
+  }
+
   this.setRoute = (route) => {
     if(route !== this.currentRoute){
       const from = JSON.parse(JSON.stringify(this.currentRoute))
       this.lastRoute = from
       this.currentRoute = route
+      this.currentRouteWindow.innerHTML = `Current route: <code>${this.currentRoute}</code>`
 
       if(this.useLogger){
         console.log('route changed.', {from, to: route})
@@ -25,32 +42,14 @@ function Router(options = {}){
     }
   }
 
-  this.getRoute = () => {
-    return this.currentRoute
-  }
-
   this.getDOM = (initialNodes) => {
     const div = document.createElement('div')
     div.dataset.name = 'router'
+    div.title = 'Router DOM'
 
     if(this.useLogger){
       div.style.border = '1px solid'
       div.style.padding = '10px'
-      div.innerHTML += 'router'
-      div.innerHTML += String(this.currentRoute)
-
-      const input = document.createElement('input')
-      const button = document.createElement('button')
-      button.innerHTML = 'submit'
-      button.onclick = () => {
-        console.log(input.value)
-        const newRoute = input.value
-        this.setRoute(newRoute)
-        div.appendChild(document.createTextNode(String(this.currentRoute)))
-      }
-
-      div.appendChild(input)
-      div.appendChild(button)
     }
 
     if(initialNodes && initialNodes.length > 0){
@@ -72,17 +71,45 @@ function Router(options = {}){
   }
 
   this.createNavigation = (type) => {
+    // Button Navigator
     if(type === 'button'){
+      const div = document.createElement('div')
+      div.id = 'router-nav-buttons'
       const links = this.routeMap[this.currentRoute].links
-      const routes = []
 
       for (let index = 0; index < links.length; index++) {
         const link = links[index];
-        routes.push(this.routeMap[link])
+
+        const button = document.createElement('button')
+        const route = this.routeMap[link]
+        button.innerHTML = route.name
+        button.onclick = () => {
+          this.setRoute(route.path)
+        }
+
+        div.appendChild(button)
       }
 
-      const nav = new NavButtons({routes, router: this})
-      return nav
+      return div
+    }
+
+    // Input Navigator
+    else if (type === 'input') {
+      const div = document.createElement('div')
+      div.id = 'router-nav-input'
+      const input = document.createElement('input')
+      const button = document.createElement('button')
+      button.innerHTML = 'submit'
+      button.onclick = () => {
+        console.log(input.value)
+        const newRoute = input.value
+        this.setRoute(newRoute)
+      }
+
+      div.appendChild(input)
+      div.appendChild(button)
+
+      return div
     }
 
     return document.createElement('div')
@@ -119,27 +146,6 @@ function Router(options = {}){
     this.links = links
     this.scripts = scripts
     this.payload = payload
-
-    return this
-  }
-
-  function NavButtons(options = {}){
-    const { routes = [], router } = options
-
-    this.Node = document.createElement('div')
-    this.Node.id = 'router-nav'
-
-    for (let index = 0; index < routes.length; index++) {
-      const route = routes[index];
-
-      const button = document.createElement('button')
-      button.innerHTML = route.name
-      button.onclick = () => {
-        router.setRoute(route.path)
-      }
-
-      this.Node.appendChild(button)
-    }
 
     return this
   }
