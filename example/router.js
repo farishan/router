@@ -5,13 +5,17 @@ router.onchange = (e) => {
   if(document.getElementById(`dynamicRoot${e.lastRoute}`)){
     document.getElementById(`dynamicRoot${e.lastRoute}`).remove()
   }
+
+  const navButtons = router.createNavigation('button')
+
+  document.getElementById('router-nav').replaceWith(navButtons.Node)
 }
 
 const routes = {
   '/': router.createRoute({
     path: '/',
     name: 'Root',
-    links: ['/test'],
+    links: ['/test', '/inventory'],
     payload: {
       hello: 'hello'
     }
@@ -21,6 +25,12 @@ const routes = {
     name: 'Test',
     links: ['/'],
     scripts: ['test']
+  }),
+  '/inventory': router.createRoute({
+    path: '/inventory',
+    name: 'Inventory',
+    links: ['/'],
+    scripts: ['inventory']
   })
 }
 

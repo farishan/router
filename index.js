@@ -73,11 +73,14 @@ function Router(options = {}){
 
   this.createNavigation = (type) => {
     if(type === 'button'){
+      const links = this.routeMap[this.currentRoute].links
       const routes = []
-      for (let index = 0; index < Object.keys(this.routeMap).length; index++) {
-        const path = Object.keys(this.routeMap)[index];
-        routes.push(this.routeMap[path])
+
+      for (let index = 0; index < links.length; index++) {
+        const link = links[index];
+        routes.push(this.routeMap[link])
       }
+
       const nav = new NavButtons({routes, router: this})
       return nav
     }
@@ -121,10 +124,10 @@ function Router(options = {}){
   }
 
   function NavButtons(options = {}){
-    console.log(options)
     const { routes = [], router } = options
 
     this.Node = document.createElement('div')
+    this.Node.id = 'router-nav'
 
     for (let index = 0; index < routes.length; index++) {
       const route = routes[index];
