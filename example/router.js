@@ -1,30 +1,8 @@
-const router = new Router({
-  useLogger: false,
-  onchange: (e) => {
-    scriptLoader.reset();
-    if (e.routeMap[e.currentRoute]) {
-      scriptLoader.loadScripts(false, e.routeMap[e.currentRoute].scripts);
-    }
-
-    if (document.getElementById(`dynamicRoot${e.lastRoute}`)) {
-      document.getElementById(`dynamicRoot${e.lastRoute}`).remove();
-    }
-
-    const navButtons = router.createNavigation("button");
-    const navInput = router.createNavigation("input");
-
-    if (document.getElementById("router-nav-buttons")) {
-      document.getElementById("router-nav-buttons").replaceWith(navButtons);
-    }
-
-    if (document.getElementById("router-nav-input")) {
-      document.getElementById("router-nav-input").replaceWith(navInput);
-    }
-  },
-});
-
+// Define and initialize router
+const router = new Router();
 router.init();
 
+// Create routes
 router.createRoute({
   path: "/",
   name: "Root",
@@ -33,33 +11,30 @@ router.createRoute({
     hello: "hello",
   },
 });
-
 router.createRoute({
   path: "/test",
   name: "Test",
   links: ["/"],
   scripts: ["test"],
 });
+router.createRoutes([
+  {
+    path: "/inventory",
+    name: "Inventory",
+    links: ["/"],
+    scripts: ["inventory"],
+  },
+  {
+    path: "/pocket",
+    name: "Pocket",
+    links: ["/", "/inventory"],
+    scripts: ["pocket"],
+  },
+]);
 
-router.createRoute({
-  path: "/inventory",
-  name: "Inventory",
-  links: ["/"],
-  scripts: ["inventory"],
-});
-
-router.createRoute({
-  path: "/pocket",
-  name: "Pocket",
-  links: ["/", "/inventory"],
-  scripts: ["pocket"],
-});
-
-// console.log(router.routeMap);
-
-const navButtons = router.createNavigation("button");
-const navInput = router.createNavigation("input");
-
-const routerDOM = router.getDOM([navButtons, navInput]);
-
-// document.body.appendChild(routerDOM);
+// (Optional) Render router interface
+const routerDOM = router.getDOM([
+  router.createNavigation("button"),
+  router.createNavigation("input"),
+]);
+document.body.appendChild(routerDOM);

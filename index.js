@@ -6,10 +6,16 @@
  */
 function Router(options = {}) {
   const { initialRoute, useLogger = false, onchange } = options;
+  const DYNAMIC_ROOT_PREFIX = "dynamicRoot";
+  const NAVIGATOR_ID = {
+    button: "router-nav-buttons",
+    input: "router-nav-input",
+  };
 
   this.useLogger = useLogger;
 
   this.currentRoute = initialRoute ? initialRoute : "/";
+  this.currentLinks = [];
   this.lastRoute = null;
   this.routeMap = {};
 
@@ -37,6 +43,13 @@ function Router(options = {}) {
       this.lastRoute = from;
       this.currentRoute = route;
       this.currentRouteWindow.innerHTML = `Current route: <code>${this.currentRoute}</code>`;
+
+      if (this.routeMap[route] && this.routeMap[route].links) {
+        this.currentLinks = this.routeMap[route].links;
+      }
+
+      this.removeDynamicRoot();
+      this.refreshNavigation();
 
       if (this.useLogger) {
         console.log("route changed.", { from, to: route });
@@ -76,11 +89,19 @@ function Router(options = {}) {
     return route;
   };
 
+  this.createRoutes = (options = []) => {
+    for (let index = 0; index < options.length; index++) {
+      const element = options[index];
+
+      this.createRoute(element);
+    }
+  };
+
   this.createNavigation = (type) => {
     // Button Navigator
     if (type === "button") {
       const div = document.createElement("div");
-      div.id = "router-nav-buttons";
+      div.id = NAVIGATOR_ID.button;
 
       if (this.routeMap[this.currentRoute]) {
         const links = this.routeMap[this.currentRoute].links;
@@ -110,12 +131,11 @@ function Router(options = {}) {
     // Input Navigator
     else if (type === "input") {
       const div = document.createElement("div");
-      div.id = "router-nav-input";
+      div.id = NAVIGATOR_ID.input;
       const input = document.createElement("input");
       const button = document.createElement("button");
       button.innerHTML = "submit";
       button.onclick = () => {
-        console.log(input.value);
         const newRoute = input.value;
         this.setRoute(newRoute);
       };
@@ -130,15 +150,33 @@ function Router(options = {}) {
   };
 
   this.createDynamicRoot = (path) => {
-    const prefix = "dynamicRoot";
-
-    if (!document.getElementById(`${prefix}/${path}`)) {
+    if (!document.getElementById(`${DYNAMIC_ROOT_PREFIX}/${path}`)) {
       const root = document.createElement("div");
-      root.id = `${prefix}/${path}`;
+      root.id = `${DYNAMIC_ROOT_PREFIX}/${path}`;
 
       return root;
     } else {
-      return document.getElementById(`${prefix}/${path}`);
+      return document.getElementById(`${DYNAMIC_ROOT_PREFIX}/${path}`);
+    }
+  };
+
+  this.removeDynamicRoot = () => {
+    const dom = document.getElementById(
+      `${DYNAMIC_ROOT_PREFIX}${this.lastRoute}`
+    );
+    if (dom) dom.remove();
+  };
+
+  this.refreshNavigation = () => {
+    if (document.getElementById(NAVIGATOR_ID.button)) {
+      document
+        .getElementById(NAVIGATOR_ID.button)
+        .replaceWith(this.createNavigation("button"));
+    }
+    if (document.getElementById(NAVIGATOR_ID.input)) {
+      document
+        .getElementById(NAVIGATOR_ID.input)
+        .replaceWith(this.createNavigation("input"));
     }
   };
 

@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/farishan/router/issues"
   },
-  "homepage": "https://github.com/farishan/router#readme"
+  "homepage": "https://github.com/farishan/router#readme",
+  "dependencies": {
+    "@farishan/script-loader": "^0.2.0"
+  }
 }
