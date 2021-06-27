@@ -1,0 +1,16 @@
+{
+  "name": "basic-router",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx uglifyjs index.js -o dist/router.js && npx uglifyjs index.js -c -o dist/router.min.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@farishan/script-loader": "^0.1.1"
+  }
+}
