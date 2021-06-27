@@ -1,5 +1,5 @@
 const router = new Router({
-  useLogger: true,
+  useLogger: false,
   onchange: (e) => {
     scriptLoader.reset();
     if (e.routeMap[e.currentRoute]) {
@@ -28,7 +28,7 @@ router.init();
 router.createRoute({
   path: "/",
   name: "Root",
-  links: ["/test", "/inventory"],
+  links: ["/", "/test", "/inventory"],
   payload: {
     hello: "hello",
   },
@@ -48,6 +48,13 @@ router.createRoute({
   scripts: ["inventory"],
 });
 
+router.createRoute({
+  path: "/pocket",
+  name: "Pocket",
+  links: ["/", "/inventory"],
+  scripts: ["pocket"],
+});
+
 // console.log(router.routeMap);
 
 const navButtons = router.createNavigation("button");
@@ -55,4 +62,4 @@ const navInput = router.createNavigation("input");
 
 const routerDOM = router.getDOM([navButtons, navInput]);
 
-document.body.appendChild(routerDOM);
+// document.body.appendChild(routerDOM);

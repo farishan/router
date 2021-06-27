@@ -90,12 +90,17 @@ function Router(options = {}) {
 
           const button = document.createElement("button");
           const route = this.routeMap[link];
-          button.innerHTML = route.name;
-          button.onclick = () => {
-            this.setRoute(route.path);
-          };
 
-          div.appendChild(button);
+          if (route) {
+            button.innerHTML = route.name;
+            button.onclick = () => {
+              this.setRoute(route.path);
+            };
+
+            div.appendChild(button);
+          } else {
+            console.error(`${link} is not found in routeMap.`);
+          }
         }
       }
 

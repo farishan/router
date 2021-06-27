@@ -1,5 +1,5 @@
 const scriptLoader = new ScriptLoader({
-  statics: ["../dist/router", "router"],
+  statics: ["../index", "router"],
   main: "main",
 });
 
