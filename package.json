@@ -1,16 +1,27 @@
 {
-  "name": "basic-router",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@farishan/router",
+  "version": "0.1.0",
+  "description": "DOM router",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx uglifyjs index.js -o dist/router.js && npx uglifyjs index.js -c -o dist/router.min.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Faris Han",
   "license": "ISC",
   "peerDependencies": {
     "@farishan/script-loader": "^0.2.0"
-  }
+  },
+  "directories": {
+    "example": "example"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/farishan/router.git"
+  },
+  "bugs": {
+    "url": "https://github.com/farishan/router/issues"
+  },
+  "homepage": "https://github.com/farishan/router#readme"
 }
