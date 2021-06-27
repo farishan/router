@@ -1,6 +1,6 @@
-const scriptObject = new ScriptObject({
-  statics: ['../index', 'router'],
-  main: 'main'
-})
-const scriptLoader = new ScriptLoader()
-scriptLoader.init(scriptObject)
+const scriptLoader = new ScriptLoader({
+  statics: ["../index", "router"],
+  main: "main",
+});
+
+scriptLoader.init();

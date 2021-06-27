@@ -1,157 +1,166 @@
-function Router(options = {}){
-  const { initialRoute, useLogger = false } = options
+/**
+ * JS DOM Router
+ *
+ * @param {function} onchange - Function to handle router's state changes
+ * @returns Router object
+ */
+function Router(options = {}) {
+  const { initialRoute, useLogger = false, onchange } = options;
 
-  this.useLogger = useLogger
+  this.useLogger = useLogger;
 
-  this.currentRoute = initialRoute ? initialRoute : '/'
-  this.lastRoute = null
-  this.routeMap = {}
+  this.currentRoute = initialRoute ? initialRoute : "/";
+  this.lastRoute = null;
+  this.routeMap = {};
 
-  this.onchange = null
+  this.onchange = onchange ? onchange : null;
 
-  this.logWindow = document.createElement('div');
-  this.currentRouteWindow = document.createElement('div');
+  this.logWindow = document.createElement("div");
+  this.currentRouteWindow = document.createElement("div");
 
   this.init = () => {
-    if(this.useLogger){
-      this.logWindow.setAttribute('style', 'border:1px solid;padding:5px')
-      const logWindowTitle = document.createTextNode('Router Log Window')
-      this.logWindow.appendChild(logWindowTitle)
+    if (this.useLogger) {
+      this.logWindow.setAttribute("style", "border:1px solid;padding:5px");
+      const logWindowTitle = document.createTextNode("Router Log Window");
+      this.logWindow.appendChild(logWindowTitle);
 
-      this.currentRouteWindow.innerHTML = `Current route: <code>${this.currentRoute}</code>`
-      this.logWindow.appendChild(this.currentRouteWindow)
+      this.currentRouteWindow.innerHTML = `Current route: <code>${this.currentRoute}</code>`;
+      this.logWindow.appendChild(this.currentRouteWindow);
 
-      document.body.appendChild(this.logWindow)
+      document.body.appendChild(this.logWindow);
     }
-  }
+  };
 
   this.setRoute = (route) => {
-    if(route !== this.currentRoute){
-      const from = JSON.parse(JSON.stringify(this.currentRoute))
-      this.lastRoute = from
-      this.currentRoute = route
-      this.currentRouteWindow.innerHTML = `Current route: <code>${this.currentRoute}</code>`
+    if (route !== this.currentRoute) {
+      const from = JSON.parse(JSON.stringify(this.currentRoute));
+      this.lastRoute = from;
+      this.currentRoute = route;
+      this.currentRouteWindow.innerHTML = `Current route: <code>${this.currentRoute}</code>`;
 
-      if(this.useLogger){
-        console.log('route changed.', {from, to: route})
+      if (this.useLogger) {
+        console.log("route changed.", { from, to: route });
       }
 
-      if(this.onchange !== null){
-        this.onchange(this)
+      if (this.onchange !== null) {
+        this.onchange(this);
       }
     }
-  }
+  };
 
   this.getDOM = (initialNodes) => {
-    const div = document.createElement('div')
-    div.dataset.name = 'router'
-    div.title = 'Router DOM'
+    const div = document.createElement("div");
+    div.dataset.name = "router";
+    div.title = "Router DOM";
 
-    if(this.useLogger){
-      div.style.border = '1px solid'
-      div.style.padding = '10px'
+    if (this.useLogger) {
+      div.style.border = "1px solid";
+      div.style.padding = "10px";
     }
 
-    if(initialNodes && initialNodes.length > 0){
+    if (initialNodes && initialNodes.length > 0) {
       for (let index = 0; index < initialNodes.length; index++) {
         const node = initialNodes[index];
-        div.appendChild(node)
+        div.appendChild(node);
       }
     }
 
-    return div
-  }
+    return div;
+  };
 
   this.createRoute = (options = {}) => {
-    let route = new Route(options)
-    const { path } = options
-    this.routeMap[path] = route
+    let route = new Route(options);
+    const { path } = options;
+    this.routeMap[path] = route;
 
-    return route
-  }
+    return route;
+  };
 
   this.createNavigation = (type) => {
     // Button Navigator
-    if(type === 'button'){
-      const div = document.createElement('div')
-      div.id = 'router-nav-buttons'
-      const links = this.routeMap[this.currentRoute].links
+    if (type === "button") {
+      const div = document.createElement("div");
+      div.id = "router-nav-buttons";
 
-      for (let index = 0; index < links.length; index++) {
-        const link = links[index];
+      if (this.routeMap[this.currentRoute]) {
+        const links = this.routeMap[this.currentRoute].links;
 
-        const button = document.createElement('button')
-        const route = this.routeMap[link]
-        button.innerHTML = route.name
-        button.onclick = () => {
-          this.setRoute(route.path)
+        for (let index = 0; index < links.length; index++) {
+          const link = links[index];
+
+          const button = document.createElement("button");
+          const route = this.routeMap[link];
+          button.innerHTML = route.name;
+          button.onclick = () => {
+            this.setRoute(route.path);
+          };
+
+          div.appendChild(button);
         }
-
-        div.appendChild(button)
       }
 
-      return div
+      return div;
     }
 
     // Input Navigator
-    else if (type === 'input') {
-      const div = document.createElement('div')
-      div.id = 'router-nav-input'
-      const input = document.createElement('input')
-      const button = document.createElement('button')
-      button.innerHTML = 'submit'
+    else if (type === "input") {
+      const div = document.createElement("div");
+      div.id = "router-nav-input";
+      const input = document.createElement("input");
+      const button = document.createElement("button");
+      button.innerHTML = "submit";
       button.onclick = () => {
-        console.log(input.value)
-        const newRoute = input.value
-        this.setRoute(newRoute)
-      }
+        console.log(input.value);
+        const newRoute = input.value;
+        this.setRoute(newRoute);
+      };
 
-      div.appendChild(input)
-      div.appendChild(button)
+      div.appendChild(input);
+      div.appendChild(button);
 
-      return div
+      return div;
     }
 
-    return document.createElement('div')
-  }
+    return document.createElement("div");
+  };
 
   this.createDynamicRoot = (path) => {
-    const prefix = 'dynamicRoot'
+    const prefix = "dynamicRoot";
 
-    if(!document.getElementById(`${prefix}/${path}`)){
-      const root = document.createElement('div')
-      root.id = `${prefix}/${path}`
+    if (!document.getElementById(`${prefix}/${path}`)) {
+      const root = document.createElement("div");
+      root.id = `${prefix}/${path}`;
 
-      return root
+      return root;
     } else {
-      return document.getElementById(`${prefix}/${path}`)
+      return document.getElementById(`${prefix}/${path}`);
     }
-  }
+  };
 
   this.loadContent = (path, callback) => {
     const root = router.createDynamicRoot(path);
-    root.appendChild(callback())
-    document.body.appendChild(root)
-  }
+    root.appendChild(callback());
+    document.body.appendChild(root);
+  };
 
-  return this
+  return this;
 
   // Subtemplates
-  function Route(options = {}){
-    const { path, name, links, payload, scripts = [] } = options
+  function Route(options = {}) {
+    const { path, name, links, payload, scripts = [] } = options;
 
-    this.id = `Route${ID()}`
-    this.path = path
-    this.name = name
-    this.links = links
-    this.scripts = scripts
-    this.payload = payload
+    this.id = `Route${ID()}`;
+    this.path = path;
+    this.name = name;
+    this.links = links;
+    this.scripts = scripts;
+    this.payload = payload;
 
-    return this
+    return this;
   }
 
   // Helper
   function ID() {
-    return '_' + Math.random().toString(36).substr(2, 9);
-  };
+    return "_" + Math.random().toString(36).substr(2, 9);
+  }
 }
