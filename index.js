@@ -137,6 +137,11 @@ function Router(options = {}) {
     }
   };
 
+  /**
+   *
+   * @param {string} path - path where content will be loaded
+   * @param {Function} callback - callback function returning path content DOM Node
+   */
   this.loadContent = (path, callback) => {
     const root = router.createDynamicRoot(path);
     root.appendChild(callback());
