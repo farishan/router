@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="./index.js"></script>
+  <script>
+    const button = document.createElement('button')
+    button.innerHTML = 'go to /test'
+    button.onclick = () => {
+      router.push('/test')
+      router.clear()
+    }
+
+    const button1 = document.createElement('button')
+    button1.innerHTML = 'go to /test1'
+    button1.onclick = () => {
+      router.push('/test1')
+
+      const content = document.createElement('div')
+      content.innerHTML = 'test1 content'
+      router.render(content)
+    }
+
+    document.body.appendChild(button)
+    document.body.appendChild(button1)
+  </script>
+</body>
+</html>
