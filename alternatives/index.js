@@ -1,9 +1,10 @@
 const router = {
   $root: document.body,
-  createElement: () => document.createElement("div"),
-
   node: {},
   currentPath: "/",
+  onchange: null,
+
+  createElement: () => document.createElement("div"),
 
   init: function () {
     this.node.root = this.createElement();
@@ -24,6 +25,10 @@ const router = {
   push: function (path) {
     this.currentPath = path;
     this.renderMeta();
+
+    if (this.onchange !== null) {
+      this.onchange(this);
+    }
   },
 
   renderMeta: function () {
